@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en" x-data="cvApp()" :class="{ 'dark': darkMode }" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuda Wiratama | Campaign & Content Operations Professional</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        mandiri: {
+                            blue: '#003366',
+                            gold: '#F2A900',
+                            lightBlue: '#00529B',
+                            accent: '#0284C7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Alpine.js for Interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #0f172a !important;
+                font-size: 11pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .card-print {
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                color: #0f172a !important;
+            }
+            .text-print-dark {
+                color: #0f172a !important;
+            }
+            .bg-print-light {
+                background-color: #f8fafc !important;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100 light:bg-slate-50 light:text-slate-800">
+
+    <!-- Toast Notification -->
+    <div x-show="toast.show" 
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="opacity-0 translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200 transform"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-4"
+         class="fixed bottom-6 right-6 z-50 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 no-print"
+         style="display: none;">
+        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+        <span x-text="toast.message" class="font-medium text-sm"></span>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/80 border-b border-slate-800/80 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-amber-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20">
+                    YW
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg tracking-tight leading-none text-white">Yuda Wiratama</h1>
+                    <p class="text-xs text-amber-400 font-medium">Campaign Operations Specialist</p>
+                </div>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center space-x-1 text-sm font-medium text-slate-300">
+                <a href="#about" class="px-3 py-2 rounded-lg hover:text-amber-400 hover:bg-slate-800/50 transition">About</a>
+                <a href="#experience" class="px-3 py-2 rounded-lg hover:text-amber-400 hover:bg-slate-800/50 transition">Experience</a>
+                <a href="#skills" class="px-3 py-2 rounded-lg hover:text-amber-400 hover:bg-slate-800/50 transition">Skills & Tools</a>
+                <a href="#organisation" class="px-3 py-2 rounded-lg hover:text-amber-400 hover:bg-slate-800/50 transition">Leadership</a>
+                <a href="#education" class="px-3 py-2 rounded-lg hover:text-amber-400 hover:bg-slate-800/50 transition">Education</a>
+            </nav>
+
+            <!-- Action Controls -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <button @click="printCV()" 
+                        class="flex items-center space-x-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition active:scale-95">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Print / PDF</span>
+                </button>
+
+                <a href="https://wa.me/6285640706090?text=Halo%20Yuda,%20saya%20tertarik%20dengan%20profil%20dan%20pengalaman%20Anda." target="_blank"
+                   class="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold shadow-lg shadow-emerald-600/20 transition active:scale-95">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">WhatsApp</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Hero Section / Personal Summary -->
+        <section id="about" class="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-800/90 to-slate-900/90 border border-slate-700/60 p-6 sm:p-10 shadow-2xl">
+            <!-- Decorative Accent Elements -->
+            <div class="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Left Details -->
+                <div class="lg:col-span-8 space-y-5">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Active Campaign Operations Professional @ Bank Mandiri</span>
+                    </div>
+
+                    <div>
+                        <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                            Yuda Wiratama
+                        </h1>
+                        <p class="text-lg sm:text-xl font-medium text-amber-400 mt-1">
+                            Campaign & Content Operations Specialist
+                        </p>
+                    </div>
+
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed text-justify">
+                        Results-driven campaign and content operations professional with experience managing end-to-end campaign execution, content planning, and stakeholder coordination for <span class="text-white font-semibold underline decoration-amber-500/50">Livin' by Mandiri</span>. Proven track record in maintaining <span class="text-white font-semibold">120+ campaign content assets daily/monthly</span> (1,000 annually), developing structured content calendars, and ensuring <span class="text-emerald-400 font-semibold">100% on-time delivery</span> across 15+ business units. Strong analytical and project management skills with expertise in campaign reporting, performance tracking, and cross-functional collaboration to support data-driven marketing decisions.
+                    </p>
+
+                    <!-- Quick Contact Badges -->
+                    <div class="pt-2 flex flex-wrap gap-3 text-xs sm:text-sm">
+                        <button @click="copyToClipboard('yuda.wiratama28@gmail.com', 'Email copied!')" 
+                                class="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 transition group">
+                            <i data-lucide="mail" class="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform"></i>
+                            <span>yuda.wiratama28@gmail.com</span>
+                            <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400 ml-1"></i>
+                        </button>
+
+                        <button @click="copyToClipboard('+6285640706090', 'Phone number copied!')" 
+                                class="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 transition group">
+                            <i data-lucide="phone" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+                            <span>+62 856-4070-6090</span>
+                            <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400 ml-1"></i>
+                        </button>
+
+                        <a href="https://www.linkedin.com/in/yudawiratama/" target="_blank" 
+                           class="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 transition group">
+                            <i data-lucide="linkedin" class="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform"></i>
+                            <span>linkedin.com/in/yudawiratama</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400 ml-1"></i>
+                        </a>
+
+                        <div class="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-800/60 border border-slate-700/60 text-slate-300">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-rose-400"></i>
+                            <span>Jakarta, Indonesia</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Quick Stats Grid -->
+                <div class="lg:col-span-4 grid grid-cols-2 gap-3 sm:gap-4">
+                    <div class="bg-slate-800/80 border border-slate-700/70 p-4 rounded-2xl flex flex-col justify-between hover:border-amber-500/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-2xl sm:text-3xl font-extrabold text-white">100%</span>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">On-Time Delivery Rate</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/70 p-4 rounded-2xl flex flex-col justify-between hover:border-blue-500/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2">
+                            <i data-lucide="layers" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-2xl sm:text-3xl font-extrabold text-white">120+</span>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">Assets Monthly (1,000+/yr)</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/70 p-4 rounded-2xl flex flex-col justify-between hover:border-emerald-500/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-2xl sm:text-3xl font-extrabold text-white">15+</span>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">Business Units Coordinated</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/70 p-4 rounded-2xl flex flex-col justify-between hover:border-purple-500/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-2xl sm:text-3xl font-extrabold text-white">50-80%</span>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">Engagement & Reach Growth</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content 2-Column Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Left Column: Experience Timeline -->
+            <div class="lg:col-span-8 space-y-8">
+                
+                <section id="experience" class="space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400">
+                                <i data-lucide="briefcase" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-white">Work Experience</h2>
+                                <p class="text-xs text-slate-400">End-to-end campaign operations & creative leadership</p>
+                            </div>
+                        </div>
+
+                        <!-- Filter Pills -->
+                        <div class="flex items-center space-x-1.5 bg-slate-800/80 p-1 rounded-xl no-print text-xs font-semibold">
+                            <button @click="expFilter = 'all'" 
+                                    :class="expFilter === 'all' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'"
+                                    class="px-3 py-1.5 rounded-lg transition">All</button>
+                            <button @click="expFilter = 'fintech'" 
+                                    :class="expFilter === 'fintech' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'"
+                                    class="px-3 py-1.5 rounded-lg transition">Banking / Fintech</button>
+                            <button @click="expFilter = 'media'" 
+                                    :class="expFilter === 'media' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'"
+                                    class="px-3 py-1.5 rounded-lg transition">Media & Podcast</button>
+                        </div>
+                    </div>
+
+                    <!-- Experience Items List -->
+                    <div class="space-y-6 relative before:absolute before:inset-0 before:left-5 before:w-0.5 before:bg-slate-800">
+
+                        <!-- Item 1: Bank Mandiri -->
+                        <div x-show="expFilter === 'all' || expFilter === 'fintech'"
+                             x-transition
+                             class="relative pl-12 group">
+                            <!-- Timeline Dot -->
+                            <div class="absolute left-3 top-1.5 -translate-x-1/2 w-4 h-4 rounded-full bg-amber-500 ring-4 ring-slate-900 group-hover:scale-125 transition-transform"></div>
+
+                            <div class="bg-slate-800/80 border border-slate-700/80 hover:border-amber-500/40 rounded-2xl p-6 shadow-lg transition">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <h3 class="text-lg font-bold text-white">Campaign Operations</h3>
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">Livin' by Mandiri</span>
+                                        </div>
+                                        <p class="text-sm font-semibold text-slate-300">Bank Mandiri <span class="text-slate-500">•</span> Jakarta, Indonesia</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-700/60 text-slate-300 w-fit">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 text-amber-400"></i>
+                                        Oct 2023 – Present
+                                    </span>
+                                </div>
+
+                                <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300 mt-4">
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                                        <span>Planned and managed end-to-end back-office operations for <strong class="text-white">Livin' by Mandiri</strong> campaign projects, ensuring smooth execution, on-time delivery, and alignment with business objectives across multiple stakeholders.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                                        <span>Oversaw the publishing schedule, project timeline, and key milestones for campaign content initiatives, achieving an <strong class="text-emerald-400">on-time delivery rate of 100%</strong> and eliminating delays or escalations.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                                        <span>Monitored and maintained <strong class="text-white">120+ campaign content assets monthly</strong> (1,000+ assets annually), ensuring 100% accuracy, compliance, and readiness for publication.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                                        <span>Managed content distribution and deployment between Livin' by Mandiri and internal stakeholders, ensuring seamless coordination across <strong class="text-white">15+ internal departments or business units</strong>.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                                        <span>Executed monthly targeted marketing campaigns supporting customer acquisition, engagement, and retention initiatives.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                                        <span>Produced monthly campaign performance reports and analytical dashboards, tracking KPIs like impressions, engagement, conversion, and campaign effectiveness for data-driven decisions.</span>
+                                    </li>
+                                </ul>
+
+                                <div class="mt-4 pt-4 border-t border-slate-700/60 flex flex-wrap gap-2">
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Campaign Operations</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Stakeholder Management</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Performance Dashboards</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Content Strategy</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 2: Salvo -->
+                        <div x-show="expFilter === 'all' || expFilter === 'media'"
+                             x-transition
+                             class="relative pl-12 group">
+                            <!-- Timeline Dot -->
+                            <div class="absolute left-3 top-1.5 -translate-x-1/2 w-4 h-4 rounded-full bg-blue-500 ring-4 ring-slate-900 group-hover:scale-125 transition-transform"></div>
+
+                            <div class="bg-slate-800/80 border border-slate-700/80 hover:border-blue-500/40 rounded-2xl p-6 shadow-lg transition">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Podcast Specialist</h3>
+                                        <p class="text-sm font-semibold text-slate-300">Salvo <span class="text-slate-500">•</span> Jakarta, Indonesia</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-700/60 text-slate-300 w-fit">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 text-blue-400"></i>
+                                        Nov 2022 – Aug 2023
+                                    </span>
+                                </div>
+
+                                <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300 mt-4">
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                        <span>Designed and created podcast episodes that boosted overall engagement by <strong class="text-emerald-400">50% to 70%</strong>.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                        <span>Planned and developed brand identity & USP for podcasts, increasing subscriber base by <strong class="text-emerald-400">50% to 70%</strong>.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                        <span>Managed full pre-production, production, and post-production audio/video workflows.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                        <span>Actively published multi-channel short-form video content across YouTube Shorts, TikTok, and Instagram Reels at a cadence of <strong class="text-white">3 contents daily</strong>.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                                        <span>Delivered monthly numeric engagement analytics and performance reports.</span>
+                                    </li>
+                                </ul>
+
+                                <div class="mt-4 pt-4 border-t border-slate-700/60 flex flex-wrap gap-2">
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Podcast Production</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">TikTok & Reels</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Audio Editing</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Brand Positioning</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 3: Tiga SKS -->
+                        <div x-show="expFilter === 'all' || expFilter === 'media'"
+                             x-transition
+                             class="relative pl-12 group">
+                            <!-- Timeline Dot -->
+                            <div class="absolute left-3 top-1.5 -translate-x-1/2 w-4 h-4 rounded-full bg-purple-500 ring-4 ring-slate-900 group-hover:scale-125 transition-transform"></div>
+
+                            <div class="bg-slate-800/80 border border-slate-700/80 hover:border-purple-500/40 rounded-2xl p-6 shadow-lg transition">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Content Director</h3>
+                                        <p class="text-sm font-semibold text-slate-300">Tiga SKS <span class="text-slate-500">•</span> Semarang, Indonesia</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-700/60 text-slate-300 w-fit">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 text-purple-400"></i>
+                                        Jan 2019 – Present
+                                    </span>
+                                </div>
+
+                                <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300 mt-4">
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-purple-400 shrink-0 mt-0.5"></i>
+                                        <span>Planned and designed social media publications, leading a creative team of <strong class="text-white">9 members</strong> to deliver 3-5 original contents weekly.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-purple-400 shrink-0 mt-0.5"></i>
+                                        <span>Supervised end-to-end publishing projects and social media quality assurance.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-purple-400 shrink-0 mt-0.5"></i>
+                                        <span>Provided creative direction, alternative solutions, and constructive feedback for team members.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-purple-400 shrink-0 mt-0.5"></i>
+                                        <span>Accelerated follower growth by <strong class="text-emerald-400">50% to 80%</strong> through optimized social media content strategy.</span>
+                                    </li>
+                                </ul>
+
+                                <div class="mt-4 pt-4 border-t border-slate-700/60 flex flex-wrap gap-2">
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Team Leadership (9 People)</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Creative Direction</span>
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] bg-slate-900/80 text-slate-300 font-medium">Social Media Growth</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Organisational Experience Section -->
+                <section id="organisation" class="space-y-6 pt-4 border-t border-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 rounded-xl bg-purple-500/10 text-purple-400">
+                            <i data-lucide="award" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-white">Organisational Leadership</h2>
+                            <p class="text-xs text-slate-400">Event coordination, media direction & team management</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-5">
+                        
+                        <!-- Org 1 -->
+                        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 hover:border-slate-600 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                <div>
+                                    <h3 class="text-base font-bold text-white">Head of Media</h3>
+                                    <p class="text-xs font-semibold text-amber-400">International Relations Student Council (Undip)</p>
+                                </div>
+                                <span class="text-xs text-slate-400 font-medium">Jan 2018 – Dec 2018</span>
+                            </div>
+                            <ul class="space-y-1.5 text-xs text-slate-300 mt-3">
+                                <li>• Managed 1-year masterplan including website, social publications, design classes, wall magazine, company profile, and movie festival.</li>
+                                <li>• Supervised and led a team of 11 members producing 7-10 high-quality contents weekly.</li>
+                                <li>• Boosted overall divisional engagement by <strong class="text-emerald-400">50%</strong> through structured mentorship and constructive feedback loops.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Org 2 -->
+                        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 hover:border-slate-600 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                <div>
+                                    <h3 class="text-base font-bold text-white">Event Coordinator</h3>
+                                    <p class="text-xs font-semibold text-amber-400">IRDU Movservation</p>
+                                </div>
+                                <span class="text-xs text-slate-400 font-medium">Mar 2018 – Oct 2018</span>
+                            </div>
+                            <ul class="space-y-1.5 text-xs text-slate-300 mt-3">
+                                <li>• Designed workplan and floorplan for movie festival, increasing event attendance by <strong class="text-emerald-400">80%</strong>.</li>
+                                <li>• Researched venues, movie licenses, vendors, and partners fit for theme & budget constraints.</li>
+                                <li>• Spearheaded fundraising campaign that increased project budget funding by <strong class="text-emerald-400">50%</strong>.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Org 3 -->
+                        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 hover:border-slate-600 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                <div>
+                                    <h3 class="text-base font-bold text-white">Personalia (HR)</h3>
+                                    <p class="text-xs font-semibold text-amber-400">FPCI Chapter Undip</p>
+                                </div>
+                                <span class="text-xs text-slate-400 font-medium">Jan 2017 – Dec 2017</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-2">
+                                Planned internal/external staff engagement programs, held monthly feedback briefings, and optimized organizational staff performance across divisions.
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Right Column: Skills, Tools, Education & Certifications -->
+            <div class="lg:col-span-4 space-y-8">
+                
+                <!-- Skills & Tools Section -->
+                <section id="skills" class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 space-y-6 shadow-xl">
+                    <div class="flex items-center space-x-3 border-b border-slate-700/70 pb-4">
+                        <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                            <i data-lucide="cpu" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Skills & Software</h2>
+                    </div>
+
+                    <!-- Core Competencies -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs uppercase tracking-wider font-bold text-amber-400">Core Competencies</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-700">Campaign Operations</span>
+                            <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-700">Content Calendar Planning</span>
+                            <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-700">Stakeholder Coordination</span>
+                            <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-700">Performance Dashboards</span>
+                            <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-700">Podcast Production</span>
+                            <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-700">Cross-Functional Agile</span>
+                            <span class="px-3 py-1 rounded-xl text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-700">Short-Form Video Strategy</span>
+                        </div>
+                    </div>
+
+                    <!-- Creative & Editing Software -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs uppercase tracking-wider font-bold text-amber-400">Design & Audio Software</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex items-center space-x-2 bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60">
+                                <div class="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-xs">Ps</div>
+                                <span class="text-xs font-semibold text-slate-200">Photoshop</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60">
+                                <div class="w-7 h-7 rounded-lg bg-amber-600/20 text-amber-400 flex items-center justify-center font-bold text-xs">Ai</div>
+                                <span class="text-xs font-semibold text-slate-200">Illustrator</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60">
+                                <div class="w-7 h-7 rounded-lg bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-xs">Au</div>
+                                <span class="text-xs font-semibold text-slate-200">Adobe Audition</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60">
+                                <div class="w-7 h-7 rounded-lg bg-rose-600/20 text-rose-400 flex items-center justify-center font-bold text-xs">GB</div>
+                                <span class="text-xs font-semibold text-slate-200">GarageBand</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Productivity Tools -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs uppercase tracking-wider font-bold text-amber-400">Productivity Suite</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="text-center bg-slate-900/80 p-2 rounded-xl border border-slate-700/60">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400 mx-auto mb-1"></i>
+                                <span class="text-[11px] font-medium text-slate-300 block">Google Sheets</span>
+                            </div>
+                            <div class="text-center bg-slate-900/80 p-2 rounded-xl border border-slate-700/60">
+                                <i data-lucide="presentation" class="w-4 h-4 text-amber-400 mx-auto mb-1"></i>
+                                <span class="text-[11px] font-medium text-slate-300 block">Google Slides</span>
+                            </div>
+                            <div class="text-center bg-slate-900/80 p-2 rounded-xl border border-slate-700/60">
+                                <i data-lucide="file-text" class="w-4 h-4 text-blue-400 mx-auto mb-1"></i>
+                                <span class="text-[11px] font-medium text-slate-300 block">Google Docs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Languages -->
+                    <div class="space-y-3 border-t border-slate-700/70 pt-4">
+                        <h3 class="text-xs uppercase tracking-wider font-bold text-amber-400">Languages</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <div class="flex justify-between text-xs font-medium mb-1">
+                                    <span class="text-white">Indonesian</span>
+                                    <span class="text-slate-400">Native / Fluent</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-emerald-400 w-full"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-medium mb-1">
+                                    <span class="text-white">English</span>
+                                    <span class="text-slate-400">Advanced (Speaking & Writing)</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-400 w-4/5"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Education Section -->
+                <section id="education" class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 space-y-5 shadow-xl">
+                    <div class="flex items-center space-x-3 border-b border-slate-700/70 pb-4">
+                        <div class="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+                            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Education</h2>
+                    </div>
+
+                    <div class="space-y-2">
+                        <span class="text-xs text-amber-400 font-semibold">Aug 2016 – Dec 2022</span>
+                        <h3 class="text-base font-bold text-white">Universitas Diponegoro</h3>
+                        <p class="text-xs text-slate-300 font-medium">Bachelor of International Relations</p>
+                        
+                        <div class="mt-3 inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold text-emerald-400">
+                            <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                            <span>GPA: 3.35 / 4.00</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Certifications Section -->
+                <section class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 space-y-5 shadow-xl">
+                    <div class="flex items-center space-x-3 border-b border-slate-700/70 pb-4">
+                        <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+                            <i data-lucide="check-square" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Certifications</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700/60 flex items-start space-x-3">
+                            <div class="w-2 h-2 rounded-full bg-amber-400 mt-1.5 shrink-0"></div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">Digital Marketing Course</h4>
+                                <p class="text-[11px] text-slate-400">Tempatbelajar.id</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700/60 flex items-start space-x-3">
+                            <div class="w-2 h-2 rounded-full bg-blue-400 mt-1.5 shrink-0"></div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">Digital Marketing Mini Course</h4>
+                                <p class="text-[11px] text-slate-400">RevoU</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Action Call to Action Box -->
+                <div class="bg-gradient-to-br from-amber-500/20 to-blue-600/20 border border-amber-500/30 rounded-3xl p-6 text-center space-y-4 no-print">
+                    <h3 class="text-lg font-bold text-white">Interested in collaborating?</h3>
+                    <p class="text-xs text-slate-300">Ready to bring efficiency and strategic alignment to your campaign operations.</p>
+                    
+                    <a href="mailto:yuda.wiratama28@gmail.com" 
+                       class="inline-flex items-center justify-center space-x-2 w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-amber-500/20">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                        <span>Send Email</span>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Printable Header & Footer (Visible only in Print Mode) -->
+    <div class="hidden print-only p-6 text-center border-t border-slate-300 mt-8 text-xs text-slate-500">
+        CV - Yuda Wiratama | Contact: +62856-4070-6090 | yuda.wiratama28@gmail.com | Jakarta, Indonesia
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="border-t border-slate-800 bg-slate-950/80 py-8 mt-16 no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p>© 2026 Yuda Wiratama. All rights reserved.</p>
+            <p class="text-[11px] text-slate-600">Built with Tailwind CSS & Alpine.js • Campaign & Content Operations Professional</p>
+        </div>
+    </footer>
+
+    <!-- Alpine JS Application Logic -->
+    <script>
+        function cvApp() {
+            return {
+                darkMode: true,
+                expFilter: 'all',
+                toast: {
+                    show: false,
+                    message: ''
+                },
+                copyToClipboard(text, msg) {
+                    // Safe clipboard copy logic
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text);
+                    } else {
+                        let textArea = document.createElement("textarea");
+                        textArea.value = text;
+                        textArea.style.position = "fixed";
+                        textArea.style.left = "-999999px";
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                        } catch (err) {
+                            console.error('Fallback copy failed', err);
+                        }
+                        document.body.removeChild(textArea);
+                    }
+
+                    this.toast.message = msg || 'Copied to clipboard!';
+                    this.toast.show = true;
+                    setTimeout(() => {
+                        this.toast.show = false;
+                    }, 2500);
+                },
+                printCV() {
+                    window.print();
+                }
+            }
+        }
+
+        // Initialize Lucide Icons on DOM Load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    </script>
+
+</body>
+</html>
